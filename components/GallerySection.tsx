@@ -2,17 +2,13 @@
 
 import { SectionTitle } from "@/components/SectionTitle";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type GallerySectionProps = {
   images: string[];
 };
 
 const captions = [
-  {
-    title: "Selvas Tropicales",
-    description: "Uno de los ecosistemas más biodiversos del planeta.",
-  },
   {
     title: "Costas del Pacífico",
     description: "Playas vírgenes rodeadas de naturaleza.",
@@ -22,7 +18,7 @@ const captions = [
     description: "Protección de especies únicas y ecosistemas estratégicos.",
   },
   {
-    title: "Vida Silvestre",
+    title: "Bahía málaga",
     description: "Fauna y flora que hacen único al Pacífico colombiano.",
   },
   {
@@ -47,8 +43,11 @@ const captions = [
   },
 ];
 
+const minSwipeDistance = 50;
+
 export function GallerySection({ images }: GallerySectionProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const touchStartX = useRef<number | null>(null);
 
   const showNextSlide = () => {
     setCurrentSlide((current) => (current + 1) % images.length);
@@ -56,6 +55,28 @@ export function GallerySection({ images }: GallerySectionProps) {
 
   const showPreviousSlide = () => {
     setCurrentSlide((current) => (current === 0 ? images.length - 1 : current - 1));
+  };
+
+  const handleTouchStart = (clientX: number) => {
+    touchStartX.current = clientX;
+  };
+
+  const handleTouchEnd = (clientX: number) => {
+    if (touchStartX.current === null) {
+      return;
+    }
+
+    const distance = touchStartX.current - clientX;
+
+    if (Math.abs(distance) >= minSwipeDistance) {
+      if (distance > 0) {
+        showNextSlide();
+      } else {
+        showPreviousSlide();
+      }
+    }
+
+    touchStartX.current = null;
   };
 
   useEffect(() => {
@@ -68,7 +89,7 @@ export function GallerySection({ images }: GallerySectionProps) {
     }, 5000);
 
     return () => window.clearInterval(autoSlide);
-  }, [images.length]);
+  }, [currentSlide, images.length]);
 
   if (images.length === 0) {
     return null;
@@ -81,7 +102,12 @@ export function GallerySection({ images }: GallerySectionProps) {
         description="Imágenes que representan la belleza del Pacífico colombiano."
       />
 
-      <div className="slider" aria-label="Galería natural">
+      <div
+        className="slider"
+        aria-label="Galería natural"
+        onTouchStart={(event) => handleTouchStart(event.changedTouches[0].clientX)}
+        onTouchEnd={(event) => handleTouchEnd(event.changedTouches[0].clientX)}
+      >
         {images.map((imageSrc, index) => (
           <div className={`slide ${index === currentSlide ? "active" : ""}`} key={imageSrc}>
             <Image src={imageSrc} alt={`Galería natural ${index + 1}`} fill sizes="82vw" priority={index === 0} />

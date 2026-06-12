@@ -58,7 +58,6 @@ const stats = [
 ];
 
 const galleryImages = [
-  "/photo-gallery1.jpeg",
   "/photo-gallery2.jpeg",
   "/photo-gallery3.jpeg",
   "/photo-gallery4.jpeg",
