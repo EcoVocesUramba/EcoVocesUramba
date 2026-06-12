@@ -62,7 +62,14 @@ const galleryImages = [
   "/photo-gallery2.jpeg",
   "/photo-gallery3.jpeg",
   "/photo-gallery4.jpeg",
+  "/photo-gallery5.jpeg",
+  "/photo-gallery6.jpeg",
+  "/photo-gallery7.jpeg",
+  "/photo-gallery8.jpeg",
+  "/photo-gallery9.jpeg"
 ];
+
+const whatsappPhoneNumber = process.env.WHATSAPP_PHONE_NUMBER ?? "";
 
 export default function Home() {
   return (
@@ -85,7 +92,7 @@ export default function Home() {
         cardClassName="accion-card"
       />
       <GallerySection images={galleryImages} />
-      <ContactSection />
+      <ContactSection whatsappPhoneNumber={whatsappPhoneNumber} />
       <Footer />
     </main>
   );
